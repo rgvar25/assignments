@@ -6,6 +6,14 @@
 
 function isAnagram(str1, str2) {
 
+  str3 = str.split('').reverse().join('');
+
+  if(str1 === str2){
+    return true
+  }else{
+    return false;
+  }
+
 }
 
 module.exports = isAnagram;

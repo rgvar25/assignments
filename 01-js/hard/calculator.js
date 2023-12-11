@@ -15,7 +15,81 @@
 
   Once you've implemented the logic, test your code by running
 */
+const math = require('mathjs')
 
-class Calculator {}
+class Calculator {
+
+  constructor() {
+    this.result = 0;
+  }
+
+
+  add(num) {
+    this.result += num;
+  }
+
+  subtract(num) {
+    this.result -= num;
+
+  }
+
+  multiply(num) {
+    this.result *= num;
+  }
+
+  divide(num) {
+    if (num == 0) {
+      throw new Error("cannot divide a num by zero");
+    }
+
+    this.result /= num;
+  }
+
+  clear() {
+    this.result = 0;
+    return this.result
+  }
+
+  getResult() {
+    return this.result;
+  }
+
+  calculate(expression) {
+    
+    expression = expression.replace(/\s+/g, '');
+    console.log(expression);
+    var isValid = /^[0-9\[\]\(\)\+\-\*/.]+$/g.test(expression);
+
+    if (!isValid) {
+      throw new Error('Invalid characters in the string. Only numbers, brackets, and arithmetic symbols are allowed.');
+    }
+    
+
+    let result;
+    try {
+      result = math.evaluate(expression)
+      if(result == 'Infinity'){
+        throw new Error("Infinity")
+      }
+      console.log(result);
+    }
+    catch (error) {
+      throw new Error(error)
+    }
+    
+    this.result = result
+  }
+}
+
+let calc = new Calculator();
+
+try {
+ calc.calculate('10/0')
+} catch (error) {
+  console.log(error);
+}
+
+
+
 
 module.exports = Calculator;

@@ -9,5 +9,36 @@ There is no automated test for this one, this is more for you to understand time
 */
 
 function calculateTime(n) {
-    return 0.01;
+    let startTime = new Date()
+    let startSeconds = startTime.getSeconds();
+    let startmili = startTime.getMilliseconds();
+    console.log(`${startSeconds} : ${startmili}`);
+
+    let sum = 0;
+
+    let i = 1;
+
+    while (i <= n) {
+        sum += i
+        i++;
+    }
+
+    let endTime = new Date();
+    let endSeconds = endTime.getSeconds();
+    let endmili = endTime.getMilliseconds();
+    console.log(`${endSeconds} : ${endmili}`);
+
+    if (endSeconds < startSeconds) {
+        endSeconds += 60
+    }
+
+
+    console.log(parseFloat(endSeconds.toString() + '.' + endmili.toString()))
+    console.log(parseFloat(startSeconds.toString() + '.' + startmili.toString()));
+
+    return (parseFloat(endSeconds.toString() + '.' + endmili.toString()) - parseFloat(startSeconds.toString() + "." + startmili.toString()));
+
 }
+
+
+console.log(calculateTime(10000))
