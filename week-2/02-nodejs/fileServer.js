@@ -23,9 +23,12 @@ app.get("/", (req,res) => {
 })
 
 app.get("/files", (req,res) =>{
-  fs.readdir("week-2\\02-nodejs\\files", (err,files) => {
+  fs.readdir("E:\\assignments\\week-2\\02-nodejs\\files", (err,files) => {
+    if(err){
+      return res.status(500).json({error : "Internal server error"})
+    }
     
-    
+    console.log(files);
     res.json(files);
   
     
@@ -33,24 +36,26 @@ app.get("/files", (req,res) =>{
 })
 
 app.get("/file/:filename" , (req,res) =>{
-  fs.readdir("week-2\\02-nodejs\\files",(err,files) => {
+  
 
-    if(files.includes(req.params.filename)){
-      fs.readFile(`week-2\\02-nodejs\\files\\${req.params.filename}`, 'utf-8', (err,data) => {
+      fs.readFile(`E:\\assignments\\week-2\\02-nodejs\\files\\${req.params.filename}`, 'utf-8', (err,data) => {
+        if(err){
+          console.log(err);
+          return res.status(404).send("File not found")
+        }
         res.send(data);
     
       })
       
 
-    }else{
-      console.log("file not found");
-      res.status(404).send("File Not Found")
+    
+      
      
-    }
+     
+    
   })
 
 
-})
 
 app.use((req, res) => {
   res.status(404).send('Route not found');
