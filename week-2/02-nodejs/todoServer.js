@@ -39,11 +39,116 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
-  
-  const app = express();
-  
-  app.use(bodyParser.json());
-  
-  module.exports = app;
+const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require("fs")
+const app = express();
+app.use(bodyParser.json());
+
+
+
+
+
+let todos = [];
+
+class Todo {
+  constructor(title, description) {
+    this.id = Math.floor(Math.random() * 1000000),
+      this.title = title,
+
+      this.completed = false
+    this.description = description
+    
+
+  }
+}
+
+
+const readFile = async () => {
+  try {
+    const fileContent = await fs.promises.readFile("./todos.json", 'utf-8');
+    todos = JSON.parse(fileContent);
+  } catch (err) {
+    console.error(`Error reading file: ${err.message}`);
+  }
+};
+
+readFile()
+
+const writeFile = async () => {
+  try {
+    await fs.promises.writeFile("./todos.json", JSON.stringify(todos));
+    await readFile(); // Optionally call readFile after writing the file.
+  } catch (err) {
+    console.error(`Error writing file: ${err.message}`);
+  }
+};
+
+
+
+
+
+
+
+app.get("/todos", (req, res) => {
+  res.json(todos)
+})
+
+app.get("/todos/:id", (req, res) => {
+
+  for (item of todos) {
+    if (item.id == req.params.id) {
+      return res.json(item);
+    }
+  }
+  res.status(404).send("Not found")
+})
+
+
+app.post("/todos", (req, res) => {
+
+  let todo = new Todo(req.body.title, req.body.description);
+  todos.push(todo);
+  writeFile();
+  res.status(201).json(todo);
+})
+
+app.put("/todos/:id", (req, res) => {
+  for (item of todos) {
+
+    if (item.id == req.params.id) {
+
+      item.title = req.body.title !== undefined ? req.body.title : item.title;
+      item.completed = req.body.completed !== undefined ? req.body.completed : item.completed;
+      item.description = req.body.description !== undefined ? req.body.description : item.description;
+      writeFile();
+      return res.sendStatus(200)
+    }
+  }
+
+  return res.status(404).send("Not Found")
+})
+
+
+app.delete("/todos/:id", (req, res) => {
+  let index = todos.findIndex((item) => item.id == req.params.id);
+
+  if (index == -1) {
+    return res.status(404).send("Not Found");
+  } else {
+    todos.splice(index, 1);
+    writeFile();
+    return res.sendStatus(200);
+  }
+})
+
+app.use((req, res) => res.sendStatus(404))
+
+
+
+
+app.listen(3000, () => {
+  console.log("listening on 3000");
+});
+
+module.exports = app;
